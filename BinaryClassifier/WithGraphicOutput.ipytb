@@ -54,6 +54,7 @@ validation_data_gen.class_indices #проверка классов для вал
 #Output обучающие данные с подписями
 train_images, train_labels = next(train_data_gen)
 test_images,  test_labels = next(validation_data_gen)
+class_names = np.array(['Pumba', 'Timon'])
 
 plt.figure(figsize=(10,10))
 for i in range(25):
