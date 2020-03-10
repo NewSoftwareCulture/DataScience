@@ -1,0 +1,107 @@
+import tensorflow as tf
+from tensorflow import keras
+import numpy as np
+import matplotlib.pyplot as plt
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import os
+
+
+base_dir = 'Datasets'
+train_dir = 'Datasets/train'
+validation_dir = 'Datasets/test'
+train_pumba_dir = 'Datasets/train/pumba'
+train_surik_dir = 'Datasets/train/surik'
+validation_pumba_dir = 'Datasets/test/pumba'
+validation_surik_dir = 'Datasets/test/surik'
+
+
+pumba_tr = len(os.listdir(train_pumba_dir))
+surik_tr = len(os.listdir(train_surik_dir))
+pumba_validation = len(os.listdir(validation_pumba_dir))
+surik_validation = len(os.listdir(validation_surik_dir))
+total_validation = pumba_validation + surik_validation
+total_train = pumba_tr + surik_tr
+
+print('Кабанов в тестовом наборе данных: ', pumba_tr)
+print('Сурикатов в тестовом наборе данных: ', surik_tr)
+print('Кабанов в валидационном наборе данных: ', pumba_validation)
+print('Сурикатов в валидационном наборе данных: ', surik_validation)
+print('Животных в тестовом наборе данных: ', total_train)
+print('Животных в валидационном наборе данных: ', total_validation)
+
+BATCH_SIZE = 203 # количество тренировочных изображений для обработки перед обновлением параметров модели
+IMG_SHAPE = 80 # размерность 80x80 к которой будет преведено входное изображение
+train_image_generator = ImageDataGenerator(rescale=1./255)
+validation_image_generator = ImageDataGenerator(rescale=1./255)
+
+train_data_gen = train_image_generator.flow_from_directory(batch_size=total_train,
+                                                          directory=train_dir,
+                                                          shuffle=True,
+                                                          target_size=(IMG_SHAPE,IMG_SHAPE),
+                                                          class_mode="binary")
+                                                          
+train_data_gen.class_indices #проверка классов для обучения
+
+validation_data_gen = validation_image_generator.flow_from_directory(batch_size=total_validation,
+                                                              directory=validation_dir,
+                                                              shuffle=False,
+                                                              target_size=(IMG_SHAPE,IMG_SHAPE),
+                                                              class_mode="binary")
+                                                              
+validation_data_gen.class_indices #проверка классов для валидации
+
+#____________________________________________________________
+#Output обучающие данные с подписями
+train_images, train_labels = next(train_data_gen)
+test_images,  test_labels = next(validation_data_gen)
+
+plt.figure(figsize=(10,10))
+for i in range(25):
+    plt.subplot(5,5,i+1)
+    plt.xticks([])
+    plt.yticks([])
+    plt.grid(False)
+    plt.imshow(train_images[i], cmap=plt.cm.binary)
+    plt.xlabel(class_names[int(str(train_labels[i])[0])])
+plt.show()
+#____________________________________________________________
+
+model = tf.keras.models.Sequential([
+    tf.keras.layers.Conv2D(32, (3,3), activation='relu', input_shape=(IMG_SHAPE, IMG_SHAPE, 3)),
+    tf.keras.layers.MaxPooling2D(2, 2),
+
+    tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
+    tf.keras.layers.MaxPooling2D(2, 2),
+
+    tf.keras.layers.Conv2D(128, (3, 3), activation='relu'),
+    tf.keras.layers.MaxPooling2D(2, 2),
+
+    tf.keras.layers.Conv2D(128, (3, 3), activation='relu'),
+    tf.keras.layers.MaxPooling2D(2, 2),
+
+    tf.keras.layers.Dropout(0.5),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(512, activation='relu'),
+    tf.keras.layers.Dense(2, activation='softmax')
+])
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+model.summary()
+
+model.fit(train_images, train_labels, epochs=100) #Обучение
+test_loss, test_acc = model.evaluate(test_images,  test_labels, verbose=2) #Валидация
+
+predictions = model.predict(test_images) #Предсказания
+#____________________________________________________________
+#Output валидационные данные с подписями
+plt.figure(figsize=(20,20))
+for i in range(50):
+    plt.subplot(10,5,i+1)
+    plt.xticks([])
+    plt.yticks([])
+    plt.grid(False)
+    plt.imshow(test_images[i], cmap=plt.cm.binary)
+    plt.xlabel(class_names[np.argmax(predictions[i])])
+plt.show()
+#____________________________________________________________
