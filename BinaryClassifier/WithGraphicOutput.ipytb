@@ -106,3 +106,35 @@ for i in range(50):
     plt.xlabel(class_names[np.argmax(predictions[i])])
 plt.show()
 #____________________________________________________________
+
+TP = 0
+TN = 0
+FP = 0
+FN = 0
+i = 0
+while i < 60:
+    if str(test_labels[i])[0] == '1' and str(np.argmax(predictions[i])) == '1':
+        TP += 1
+    elif str(test_labels[i])[0] == '1' and str(np.argmax(predictions[i])) == '0':
+        FN += 1
+    elif str(test_labels[i])[0] == '0' and str(np.argmax(predictions[i])) == '1':
+        FP += 1
+    elif str(test_labels[i])[0] == '0' and str(np.argmax(predictions[i])) == '0':
+        TN += 1
+    i += 1
+    
+Accuracy = (TN + TP) / (TN + FP + FN + TP)
+Precision = TP / (FP + TP)
+Sensitivity = TP / (TP + FN)
+Specificity = TN / (TN + FP)
+
+
+print("TP:", TP)
+print("TN:", TN)
+print("FP:", FP)
+print("FN:", FN)
+print('')
+print("Accuracy:", Accuracy)
+print("Precision:", Precision)
+print("Sensitivity:", Sensitivity)
+print("Specificity:", Specificity)
