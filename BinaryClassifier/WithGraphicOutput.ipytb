@@ -8,7 +8,7 @@ import os
 
 base_dir = 'Datasets'
 train_dir = 'Datasets/train'
-validation_dir = 'Datasets/test'
+test_dir = 'Datasets/test'
 train_pumba_dir = 'Datasets/train/pumba'
 train_surik_dir = 'Datasets/train/surik'
 test_pumba_dir = 'Datasets/test/pumba'
@@ -29,32 +29,98 @@ print('Сурикатов в валидационном наборе данны�
 print('Животных в тестовом наборе данных: ', total_train)
 print('Животных в валидационном наборе данных: ', total_test)
 
-IMG_SHAPE = 80 # размерность 80x80 
-train_image_generator = ImageDataGenerator(rescale=1./255)
-test_image_generator = ImageDataGenerator(rescale=1./255)
+IMG_SHAPE = 80 # размерность 80x80
 
-train_data_gen = train_image_generator.flow_from_directory(batch_size=total_train,
+image_generator_1 = ImageDataGenerator(rescale=1./255)
+image_generator_2 = ImageDataGenerator(rescale=1./255, rotation_range=45, vertical_flip=True)
+image_generator_3 = ImageDataGenerator(rescale=1./255, rotation_range=135)
+image_generator_4 = ImageDataGenerator(rescale=1./255, horizontal_flip=True)
+
+train_data_gen_1 = image_generator_1.flow_from_directory(batch_size=total_train,
+                                                          directory=train_dir,
+                                                          shuffle=True,
+                                                          target_size=(IMG_SHAPE,IMG_SHAPE),
+                                                          class_mode="binary")
+train_data_gen_2 = image_generator_2.flow_from_directory(batch_size=total_train,
+                                                          directory=train_dir,
+                                                          shuffle=True,
+                                                          target_size=(IMG_SHAPE,IMG_SHAPE),
+                                                          class_mode="binary")
+train_data_gen_3 = image_generator_3.flow_from_directory(batch_size=total_train,
+                                                          directory=train_dir,
+                                                          shuffle=True,
+                                                          target_size=(IMG_SHAPE,IMG_SHAPE),
+                                                          class_mode="binary")
+train_data_gen_4 = image_generator_4.flow_from_directory(batch_size=total_train,
                                                           directory=train_dir,
                                                           shuffle=True,
                                                           target_size=(IMG_SHAPE,IMG_SHAPE),
                                                           class_mode="binary")
                                                           
-train_data_gen.class_indices #проверка классов для обучения
+print(train_data_gen_1.class_indices) #проверка классов для обучения
+print(train_data_gen_2.class_indices)
+print(train_data_gen_3.class_indices)
+print(train_data_gen_4.class_indices)
 
-test_data_gen = test_image_generator.flow_from_directory(batch_size=total_test,
-                                                              directory=validation_dir,
+test_data_gen_1 = image_generator_1.flow_from_directory(batch_size=total_test,
+                                                              directory=test_dir,
+                                                              shuffle=False,
+                                                              target_size=(IMG_SHAPE,IMG_SHAPE),
+                                                              class_mode="binary")
+test_data_gen_2 = image_generator_2.flow_from_directory(batch_size=total_test,
+                                                              directory=test_dir,
+                                                              shuffle=False,
+                                                              target_size=(IMG_SHAPE,IMG_SHAPE),
+                                                              class_mode="binary")
+test_data_gen_3 = image_generator_3.flow_from_directory(batch_size=total_test,
+                                                              directory=test_dir,
+                                                              shuffle=False,
+                                                              target_size=(IMG_SHAPE,IMG_SHAPE),
+                                                              class_mode="binary")
+test_data_gen_4 = image_generator_4.flow_from_directory(batch_size=total_test,
+                                                              directory=test_dir,
                                                               shuffle=False,
                                                               target_size=(IMG_SHAPE,IMG_SHAPE),
                                                               class_mode="binary")
                                                               
-test_data_gen.class_indices #проверка классов для теста
+print(test_data_gen_1.class_indices) #проверка классов для теста
+print(test_data_gen_2.class_indices)
+print(test_data_gen_3.class_indices)
+print(test_data_gen_4.class_indices)
+
+
+train_images_1, train_labels_1 = next(train_data_gen_1)
+train_images_2, train_labels_2 = next(train_data_gen_2)
+train_images_3, train_labels_3 = next(train_data_gen_3)
+train_images_4, train_labels_4 = next(train_data_gen_4)
+
+train_images = np.concatenate((train_images_1, train_images_2))
+train_images = np.concatenate((train_images, train_images_3))
+train_images = np.concatenate((train_images, train_images_4))
+
+train_labels = np.concatenate((train_labels_1, train_labels_2))
+train_labels = np.concatenate((train_labels, train_labels_4))
+train_labels = np.concatenate((train_labels, train_labels_4))
+
+
+test_images_1, test_labels_1 = next(test_data_gen_1)
+test_images_2, test_labels_2 = next(test_data_gen_2)
+test_images_3, test_labels_3 = next(test_data_gen_3)
+test_images_4, test_labels_4 = next(test_data_gen_4)
+
+test_images = np.concatenate((test_images_1, test_images_2))
+test_images = np.concatenate((test_images, test_images_3))
+test_images = np.concatenate((test_images, test_images_4))
+
+test_labels = np.concatenate((test_labels_1, test_labels_2))
+test_labels = np.concatenate((test_labels, test_labels_2))
+test_labels = np.concatenate((test_labels, test_labels_4))
+
+class_names = np.array(['Pumba', 'Timon'])
+
 
 #____________________________________________________________
 #Output обучающие данные с подписями
-train_images, train_labels = next(train_data_gen)
-test_images,  test_labels = next(test_data_gen)
-class_names = np.array(['Pumba', 'Timon'])
-
 plt.figure(figsize=(10,10))
 for i in range(25):
     plt.subplot(5,5,i+1)
