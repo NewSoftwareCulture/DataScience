@@ -133,23 +133,23 @@ plt.show()
 #____________________________________________________________
 
 model = tf.keras.models.Sequential([
-    tf.keras.layers.Conv2D(32, (3,3), activation='relu', input_shape=(IMG_SHAPE, IMG_SHAPE, 3)),
+    tf.keras.layers.Conv2D(32, (5,5), activation='relu', input_shape=(IMG_SHAPE, IMG_SHAPE, 3)),
     tf.keras.layers.MaxPooling2D(2, 2),
 
-    tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
+    tf.keras.layers.Conv2D(64, (5, 5), activation='relu'),
     tf.keras.layers.MaxPooling2D(2, 2),
 
-    tf.keras.layers.Conv2D(128, (3, 3), activation='relu'),
+    tf.keras.layers.Conv2D(128, (5, 5), activation='relu'),
     tf.keras.layers.MaxPooling2D(2, 2),
 
-    tf.keras.layers.Conv2D(512, (3, 3), activation='relu'),
+    tf.keras.layers.Conv2D(512, (5, 5), activation='relu'),
     tf.keras.layers.MaxPooling2D(2, 2),
     
     tf.keras.layers.Flatten(),
     tf.keras.layers.Dense(512, activation='relu'),
     tf.keras.layers.Dense(2, activation='softmax')
 ])
-model.compile(optimizer=keras.optimizers.SGD(learning_rate=0.01, momentum=0.0, nesterov=False),
+model.compile(optimizer=keras.optimizers.SGD(learning_rate=0.01, momentum=0.25, nesterov=False),
               loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])
 model.summary()
