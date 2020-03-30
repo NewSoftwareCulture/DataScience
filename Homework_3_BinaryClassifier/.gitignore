@@ -1,9 +1,2 @@
-Datasets/test/pumba/*.jpeg
-Datasets/test/surik/*.jpeg
-Datasets/train/pumba/*.jpeg
-Datasets/train/surik/*.jpeg
-Datasets/test/pumba/*.jpg
-Datasets/test/surik/*.jpg
-Datasets/train/pumba/*.jpg
-Datasets/train/surik/*.jpg
-Datasets/*.zip
+Datasets/*
+!Datasets/test_2/*
