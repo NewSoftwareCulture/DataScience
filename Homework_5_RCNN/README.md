@@ -6,7 +6,7 @@
 - Step 4 - Implementing Products Detection
 
 
-Структура скрытой директории
+# Структура скрытой директории
 
 /pack_detection/data/pack.bptxt
 
