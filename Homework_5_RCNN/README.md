@@ -6,15 +6,17 @@
 - Step 4 - Implementing Products Detection
 
 
+Структура скрытой директории
+
 /pack_detection/data/pack.bptxt
 
-                    /train.record
+/pack_detection/data/train.record
                     
-                    /test.record
+/pack_detection/data/test.record
                     
-               /models/faster_rcnn_nas/faster_rcnn_nas_coco.config
+/pack_detection/models/faster_rcnn_nas/faster_rcnn_nas_coco.config
                
-               /models/faster_rcnn_nas/train/
+/pack_detection/models/faster_rcnn_nas/train/
                
-               /models/faster_rcnn_nas/test/
+/pack_detection/models/faster_rcnn_nas/test/
                
